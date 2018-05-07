@@ -1,0 +1,10 @@
+.mint-switch-core{
+	height:0.6rem;
+	width:1rem;
+	// border:1px solid #ccc;
+	border-radius:0.3rem;
+}
+.mint-switch-core::after{
+	width:0.56rem;
+	height:0.56rem;
+}
