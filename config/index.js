@@ -32,12 +32,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-            '/sjy': {
-                    // target: 'http://192.168.10.12:8094',
-                    target: 'http://101.254.166.116',
+            '/zstar': {
+                    target: 'http://101.254.166.116:8080',
                     changeOrigin: true,
                     pathRewrite: {
-                      '^/': '/'
+                      '^/zstar': '/zstar'
                     }
                   }
     },

@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import store from '@/store/store'
 import * as types from '@/store/types'
 import Home from '@/components/Home'
+import SourceList from '@/components/sourceList'
 Vue.use(Router)
 
 const router=new Router({
@@ -11,6 +12,11 @@ const router=new Router({
       path: '/home',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/sourceList',
+      name: 'sourceList',
+      component: SourceList
     },
     {
         path:'/',

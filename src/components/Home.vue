@@ -59,8 +59,8 @@
     <div>
       <span>挖宝数据</span>
     </div>
-      <li><span>我当前的挖宝算力</span><em>21</em></li>
-      <li><span>我的算力排名</span><em>1055740</em></li>
+      <li><span>我当前的挖宝算力</span><em>{{myZcoin}}</em></li>
+      <li><span>我的算力排名</span><em>{{myRankNo}}</em></li>
       <li><span>今日全民挖宝获利次数</span><em>2353088</em></li>
       <li><span>累计全民挖宝获利次数</span><em>2353088</em></li>
     </ul>
@@ -74,26 +74,14 @@
         <div class="th">算力值</div>
       </div>
       <div class="tbody">
-        <div class="tr">
-          <div class="td"><img src="../assets/icon/icon05.png" alt=""></div>
-          <div class="td">三秋桂子，十里荷花</div>
-          <div class="td">657</div>
-        </div>
-        <div class="tr">
-          <div class="td"><img src="../assets/icon/icon06.png" alt=""></div>
-          <div class="td">嘻嘻哈哈</div>
-          <div class="td">657</div>
+        <div class="tr" v-for="item in list">
+          <div class="td" v-if="item.rank==1"><img src="../assets/icon/icon05.png" alt=""></div>
+          <div class="td" v-else-if="item.rank==2"><img src="../assets/icon/icon06.png" alt=""></div>
+          <div class="td" v-else-if="item.rank==3"><img src="../assets/icon/icon07.png" alt=""></div>
+          <div class="td" v-else>4</div>
+          <div class="td">{{item.name}}</div>
+          <div class="td">{{item.zcoin}}</div>
         </div>  
-        <div class="tr">
-          <div class="td"><img src="../assets/icon/icon07.png" alt=""></div>
-          <div class="td">嘻嘻哈哈</div>
-          <div class="td">657</div>
-        </div> 
-        <div class="tr">
-          <div class="td">4</div>
-          <div class="td">嘻嘻哈哈</div>
-          <div class="td">657</div>
-        </div>      
       </div>     
     </div>
     
@@ -109,14 +97,95 @@ export default {
   name: 'home',
   data () {
     return {
-      value:true
+      value:true,
+      token:"b2356eddc21c4734b097a72e5de3461a",
+      list:[],
+      myRankNo:"",
+      myZcoin:""
 
     }
   },
   mounted(){
+    // this.getDetail();
+    this.getRank();
+    // this.login();
     
   },
   methods:{
+    login(){
+      this.axios.get(api.login, {params:{username:"18610016304",password:"123456"}})
+          .then(function (res) {
+            Indicator.close();
+            if(res.data.code==200){
+              console.log(res.data);
+            }else{
+              Toast(res.data.message);
+            }
+            
+          })
+          .catch(function (error) {
+            Toast(error);
+          });
+
+    },
+    getDetail(){
+        var self=this;
+        Indicator.open();               
+        this.axios.get(api.getInfo, {params: {"zstar.sid":self.token}}).then(function (res) {
+          Indicator.close();
+          if(res.data.code==200){
+          console.log(res.data);
+
+          }else{
+            Toast(res.data.message)
+          }
+          
+
+        }).catch(function (error) {
+        　　Toast(error);
+        });
+
+      },
+    getRank(){
+       var self=this;
+        Indicator.open();               
+        this.axios.get(api.rank, {params: {"zstar.sid":self.token}}).then(function (res) {
+          Indicator.close();
+          if(res.data.code==200){
+            self.myZcoin=res.data.result.zcoin;
+            self.myRankNo=res.data.result.rankNo;
+            self.list=res.data.result.zcoinRankList;
+
+          }else{
+            Toast(res.data.message)
+          }
+          
+
+        }).catch(function (error) {
+        　　Toast(error);
+        });
+
+    },
+    getOrder(){
+       var self=this;
+        Indicator.open();               
+        this.axios.get(api.order, {params: {"zstar.sid":self.token}}).then(function (res) {
+          Indicator.close();
+          if(res.data.code==200){
+            self.myZcoin=res.data.result.zcoin;
+            self.myRankNo=res.data.result.rankNo;
+            self.list=res.data.result.zcoinRankList;
+
+          }else{
+            Toast(res.data.message)
+          }
+          
+
+        }).catch(function (error) {
+        　　Toast(error);
+        });
+
+    }
 
   }
 }
