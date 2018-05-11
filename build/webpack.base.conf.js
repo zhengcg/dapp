@@ -63,6 +63,13 @@ module.exports = {
         }
       },
       {
+         test: /\.(mp3)(\?.*)?$/,
+         loader: 'url-loader',
+         options: {
+           name: utils.assetsPath('assets/[name].[hash:7].[ext]')
+         }
+      },
+      {
         test: /\.sass$/,
         loaders: ['style', 'css', 'sass']
       }

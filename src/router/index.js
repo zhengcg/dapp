@@ -4,6 +4,10 @@ import store from '@/store/store'
 import * as types from '@/store/types'
 import Home from '@/components/Home'
 import SourceList from '@/components/sourceList'
+import MyAssets from '@/components/MyAssets'
+import Wallet from '@/components/Wallet'
+import Source from '@/components/Source'
+import Invitation from '@/components/Invitation'
 Vue.use(Router)
 
 const router=new Router({
@@ -17,6 +21,26 @@ const router=new Router({
       path: '/sourceList',
       name: 'sourceList',
       component: SourceList
+    },
+    {
+      path:'/myAssets',
+      name:'myAssets',
+      component:MyAssets
+    },
+     {
+      path:'/wallet',
+      name:'wallet',
+      component:Wallet
+    },
+    {
+      path:'/source',
+      name:'source',
+      component:Source
+    },
+    {
+      path:'/invitation',
+      name:'invitation',
+      component:Invitation
     },
     {
         path:'/',

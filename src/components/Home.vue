@@ -1,29 +1,38 @@
+
 <template>
   <div id="home">
+    <div class="topTitle">首页</div>
+    <div style="height:1.4rem"></div>
     <div class="mainBox">
       <marquee class="title" scrollamount="2" behavior="scroll">
-        首个区块链夺宝应用“今日在币得城开启”，现在关注公众号正品，参与获得积分的反间谍法
+        首个区块链夺宝应用“今日在币得城开启”，现在关注公众号正品，参与获得积分
       </marquee>
-      <div class="sl">当前挖宝算力 888</div>
+      <div class="sl">当前挖宝算力 {{myPower}}</div>
+      <div class="sr">当前正币数量 {{myZcoin}}</div>
       <div class="sm">72小时不领取宝藏将会消失</div>
+      <div class="wkBox">
+        <a href="javascript:;" class="kuang" v-for="(item,index) in kuang" @touchstart="wa(item.id,index,item.mineral)">{{item.mineral}}</a>
+        
+      </div>
+      
       <div class="cz clearfix">
-        <a href="">
+        <router-link :to="{name:'myAssets',query:{sid:token}}">
           <img src="../assets/icon/icon01.png">
           <span>我的资产</span>
-        </a>
-        <a href="">
-          <em>6</em>
+        </router-link>
+        <router-link :to="{name:'source',query:{sid:token}}">
+          <!-- <em>6</em> -->
           <img src="../assets/icon/icon02.png">
           <span>提升算力</span>
-        </a>
-        <a href="" style="float: right;">
+        </router-link>
+        <router-link :to="{name:'invitation',query:{sid:token,inviteCode:inviteCode}}" style="float: right;">
           <img src="../assets/icon/icon03.png">
           <span>邀请好友</span>
-        </a>
+        </router-link>
       </div>
       
     </div>
-    <div class="wb">
+   <!--  <div class="wb">
       <em>自动挖宝</em><span>挖宝中</span>
       <mt-switch v-model="value"></mt-switch>
     </div>
@@ -35,34 +44,24 @@
     <div class="tt">
       <span>头条</span>
       <em>【小秘书专访】星球又有新岗位啦！小伙伴们赶快加入</em>
-    </div>
+    </div> -->
     <ul class="zxjl">
       <div><span>最新记录</span></div>
-      <li>
-        <span>获得</span>
-        <span><em>0.005</em>GXS</span>
-        <span>1小时前</span>
+      <li v-for="item in powerList">
+        <span>{{item.source}}</span>
+        <span><em>{{item.power}}</em>GXS</span>
+        <span>{{item.createDate}}</span>
       </li>
-      <li>
-        <span>获得</span>
-        <span><em>0.005</em>GXS</span>
-        <span>1小时前</span>
-      </li>
-      <li>
-        <span>获得</span>
-        <span><em>0.005</em>GXS</span>
-        <span>1小时前</span>
-      </li>
-      <a href="javascript:;">查看更多记录</a>
+      <router-link :to="{name:'sourceList',query:{sid:token}}">查看更多记录</router-link>
     </ul>
     <ul class="wbsj">
     <div>
       <span>挖宝数据</span>
     </div>
-      <li><span>我当前的挖宝算力</span><em>{{myZcoin}}</em></li>
+      <li><span>我当前的挖宝算力</span><em>{{myPower}}</em></li>
       <li><span>我的算力排名</span><em>{{myRankNo}}</em></li>
-      <li><span>今日全民挖宝获利次数</span><em>2353088</em></li>
-      <li><span>累计全民挖宝获利次数</span><em>2353088</em></li>
+      <!-- <li><span>今日全民挖宝获利次数</span><em>没有接口数据</em></li>
+      <li><span>累计全民挖宝获利次数</span><em>没有接口数据</em></li> -->
     </ul>
     <div class="phTit">
       <img src="../assets/icon/icon04.png">
@@ -78,9 +77,9 @@
           <div class="td" v-if="item.rank==1"><img src="../assets/icon/icon05.png" alt=""></div>
           <div class="td" v-else-if="item.rank==2"><img src="../assets/icon/icon06.png" alt=""></div>
           <div class="td" v-else-if="item.rank==3"><img src="../assets/icon/icon07.png" alt=""></div>
-          <div class="td" v-else>4</div>
+          <div class="td" v-else>{{item.rank}}</div>
           <div class="td">{{item.name}}</div>
-          <div class="td">{{item.zcoin}}</div>
+          <div class="td">{{item.power}}</div>
         </div>  
       </div>     
     </div>
@@ -98,26 +97,42 @@ export default {
   data () {
     return {
       value:true,
-      token:"b2356eddc21c4734b097a72e5de3461a",
+      kuang:[],
+      token:"",
+      powerList:[],
       list:[],
       myRankNo:"",
-      myZcoin:""
+      myPower:"",
+      myZcoin:"",
+      inviteCode:"",
+      audioSrc:api.audio
 
     }
   },
-  mounted(){
-    // this.getDetail();
+  created(){
+    this.token=this.$route.query.sid
+    document.cookie='zstar_sid='+this.token;  
+  },
+  mounted(){        
+    this.getDetail();
     this.getRank();
-    // this.login();
-    
+    this.getPower();     
   },
   methods:{
-    login(){
-      this.axios.get(api.login, {params:{username:"18610016304",password:"123456"}})
+    wa(id,i,coin){
+      var self=this;
+      let audio = new Audio();
+      audio.src = self.audioSrc;
+      this.axios.get(api.wakuang, {params:{mineralId:id}})
           .then(function (res) {
             Indicator.close();
             if(res.data.code==200){
-              console.log(res.data);
+              self.myZcoin=parseFloat(self.myZcoin+coin).toFixed(5)
+              self.getRank()              
+              audio.play();
+              self.animateFn(i)
+            }else if(res.data.code==201){
+              window.webkit.messageHandlers.getParames.postMessage("login")
             }else{
               Toast(res.data.message);
             }
@@ -126,17 +141,29 @@ export default {
           .catch(function (error) {
             Toast(error);
           });
+     
+
+    },
+    animateFn(i){
+      
+      $(".wkBox a").eq(i).animate({left: "0.5rem", top: "10rem",opacity:0.3}, 500,function(){
+        $(this).hide()
+      });
+      
 
     },
     getDetail(){
         var self=this;
         Indicator.open();               
-        this.axios.get(api.getInfo, {params: {"zstar.sid":self.token}}).then(function (res) {
+        this.axios.get(api.getInfo).then(function (res) {
           Indicator.close();
           if(res.data.code==200){
-          console.log(res.data);
-
-          }else{
+              self.kuang=res.data.result.minerals;
+              self.myZcoin=res.data.result.zcoin;
+              self.inviteCode=res.data.result.inviteCode;
+            }else if(res.data.code==201){
+              window.webkit.messageHandlers.getParames.postMessage("login")
+            }else{
             Toast(res.data.message)
           }
           
@@ -149,13 +176,15 @@ export default {
     getRank(){
        var self=this;
         Indicator.open();               
-        this.axios.get(api.rank, {params: {"zstar.sid":self.token}}).then(function (res) {
+        this.axios.get(api.rank).then(function (res) {
           Indicator.close();
           if(res.data.code==200){
-            self.myZcoin=res.data.result.zcoin;
+            self.myPower=res.data.result.power;
             self.myRankNo=res.data.result.rankNo;
-            self.list=res.data.result.zcoinRankList;
+            self.list=res.data.result.powerRankList;
 
+          }else if(res.data.code==201){
+              window.webkit.messageHandlers.getParames.postMessage("login")
           }else{
             Toast(res.data.message)
           }
@@ -166,16 +195,16 @@ export default {
         });
 
     },
-    getOrder(){
+    getPower(){
        var self=this;
         Indicator.open();               
-        this.axios.get(api.order, {params: {"zstar.sid":self.token}}).then(function (res) {
+        this.axios.get(api.powerOrder, {params: {pageSize:3,pageNo:1}}).then(function (res) {
           Indicator.close();
           if(res.data.code==200){
-            self.myZcoin=res.data.result.zcoin;
-            self.myRankNo=res.data.result.rankNo;
-            self.list=res.data.result.zcoinRankList;
+            self.powerList=res.data.result.powerList;
 
+          }else if(res.data.code==201){
+              window.webkit.messageHandlers.getParames.postMessage("login")
           }else{
             Toast(res.data.message)
           }
@@ -226,6 +255,18 @@ textarea{
   .sl{
     position: absolute;
     left: 0.5rem;
+    height: 0.9rem;
+    line-height: 0.9rem;
+    color: #fff;
+    font-size: 0.4rem;
+    background: rgba(33,99,178,0.7);
+    padding: 0 0.4rem;
+    border-radius: 0.45rem;
+    top: 1.7rem;
+  }
+  .sr{
+    position: absolute;
+    right: 0.5rem;
     height: 0.9rem;
     line-height: 0.9rem;
     color: #fff;
@@ -356,6 +397,7 @@ textarea{
     span{
       border-left: 0.1rem solid #45db5e;
       padding-left: 0.3rem;
+
     }
   }
   li{
@@ -367,10 +409,20 @@ textarea{
     justify-content:space-between;
     align-items:center;
     span{
+      display:block;
+      width:33.3333333333333%;
       color: #666;
       em{
         color: #fc5455;
       }
+    }
+    span:nth-child(2){
+      text-align:center
+
+    }
+    span:nth-child(3){
+      text-align:right
+
     }
   }
   a{

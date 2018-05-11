@@ -52,4 +52,28 @@ html,body{height: 100%;padding: 0;margin: 0;}
 em,i{
   font-style: normal;;
 }
+.topTitle{
+  height: 1.4rem;
+  line-height: 1.4rem;
+  text-align: center;
+  color: #333;
+  font-size: 0.4rem;
+  position: fixed;
+  top: 0;
+  background: #fff;
+  width: 10.8rem;
+  left: 50%; 
+  margin-left: -5.4rem;
+  z-index: 10000;
+}
+.topTitle a{
+  display: block;
+  position: absolute;
+  width: 0.4rem;
+  height: 0.4rem;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: url("assets/icon/icon10.png") no-repeat center;
+  background-size: contain;
+}
 </style>

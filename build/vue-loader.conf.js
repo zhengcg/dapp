@@ -11,6 +11,7 @@ module.exports = {
     extract: isProduction
   }),
   transformToRequire: {
+    audio:'src',
     video: 'src',
     source: 'src',
     img: 'src',

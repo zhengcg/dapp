@@ -8,7 +8,7 @@ import 'mint-ui/lib/style.css'
 import router from './router'
 import axios from './server'
 import './assets/css/my-mint.scss';//全局修改mint-UI样式  
-// import 'vue2-animate/dist/vue2-animate.min.css';//引入动画库
+import './assets/js/jquery.js';
 Vue.prototype.axios = axios;
 Vue.use(MintUI)
 Vue.config.productionTip = false
