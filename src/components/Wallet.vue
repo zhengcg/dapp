@@ -15,7 +15,7 @@
         <div class="zcBox">
           <div class="box1" >
             
-            <em>{{zcoinBalance}}</em>
+            <em>{{zcoin}}</em>
             <p>ZIN</p>
           </div>
           <!-- <div class="box2" style="text-align:center;font-size:0.42rem">≈</div>
@@ -46,10 +46,7 @@ export default {
     return {
       token:"",
       isCreate:false,
-      zcoin:0,
-      nickName:'',
-      img:'',
-      zcoinBalance:0
+      zcoin:0
     }
   },
   created(){
@@ -58,7 +55,6 @@ export default {
   },
   mounted() {
     document.title="我的钱包";
-    this.getMyCoin();
     this.getDetail();
     
   },
@@ -114,31 +110,8 @@ export default {
         　　Toast(error);
         });
 
-      },
-      getMyCoin(){
-        var self=this;
-        Indicator.open();               
-        this.axios.get(api.getMyCoin).then(function (res) {
-          Indicator.close();
-          if(res.data.code==200){
-            if(res.data.result.img){
-              self.img=res.data.result.img;
-            }
-            self.nickName=res.data.result.nickname;
-            self.zcoinBalance=res.data.result.zcoinBalance;
-              
-            }else if(res.data.code==201){
-              window.webkit.messageHandlers.getParames.postMessage("login")
-            }else{
-            Toast(res.data.message)
-          }
-          
-
-        }).catch(function (error) {
-        　　Toast(error);
-        });
-
       }
+
    
   }
 }
