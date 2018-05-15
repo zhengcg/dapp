@@ -1,5 +1,5 @@
 export default {
-	audio:'/zstar/static/sound/audio01.mp3',
+	audio:'/static/sound/audio01.mp3',
 	// 首页
 	getInfo:'/zstar/home/index',
 	// 挖矿
@@ -15,5 +15,11 @@ export default {
 	// 创建钱包
 	createWallet:'/zstar/wallet/newAccount',
 	// 查询钱包余额
-	wallet:'/zstar/wallet/getBalance'
+	wallet:'/zstar/wallet/getBalance',
+	// 查看钱包地址
+	getAddress:'/zstar/wallet/getMyWalletAddress',
+	// 提现
+	tx:'/zstar/wallet/extractToWallet',
+	getMyCoin:'/zstar/wallet/getMyCoin',
+	zcoinRank:'/zstar/zcoin/rank'
 }

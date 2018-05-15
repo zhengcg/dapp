@@ -1,14 +1,14 @@
 
 <template>
   <div id="home">
-    <div class="topTitle">首页</div>
-    <div style="height:1.4rem"></div>
     <div class="mainBox">
-      <marquee class="title" scrollamount="2" behavior="scroll">
-        首个区块链夺宝应用“今日在币得城开启”，现在关注公众号正品，参与获得积分
+      <marquee class="title" scrollamount="2" behavior="scroll" v-if="notification">
+      <a :href="notification.url" style="color:#fff;text-decoration:none" >
+        {{notification.content}}
+      </a>
       </marquee>
-      <div class="sl">当前挖宝算力 {{myPower}}</div>
-      <div class="sr">当前正币数量 {{myZcoin}}</div>
+      <div class="sl"><router-link :to="{name:'sourceList',query:{sid:token}}" style="text-decoration:none;color:#fff;">源力值 {{myPower}}</router-link></div>
+      <div class="sr"><router-link :to="{name:'myAssets',query:{sid:token,isIndex:1}}" style="text-decoration:none;color:#fff;">正币 {{myZcoin}}</router-link></div>
       <div class="sm">72小时不领取宝藏将会消失</div>
       <div class="wkBox">
         <a href="javascript:;" class="kuang" v-for="(item,index) in kuang" @touchstart="wa(item.id,index,item.mineral)">{{item.mineral}}</a>
@@ -16,14 +16,13 @@
       </div>
       
       <div class="cz clearfix">
-        <router-link :to="{name:'myAssets',query:{sid:token}}">
+        <!-- <router-link :to="{name:'myAssets',query:{sid:token,isIndex:1}}">
           <img src="../assets/icon/icon01.png">
           <span>我的资产</span>
-        </router-link>
-        <router-link :to="{name:'source',query:{sid:token}}">
-          <!-- <em>6</em> -->
+        </router-link> -->
+        <router-link :to="{name:'source',query:{sid:token,power:myPower}}" style="margin-left:0">
           <img src="../assets/icon/icon02.png">
-          <span>提升算力</span>
+          <span>提升源力</span>
         </router-link>
         <router-link :to="{name:'invitation',query:{sid:token,inviteCode:inviteCode}}" style="float: right;">
           <img src="../assets/icon/icon03.png">
@@ -31,6 +30,10 @@
         </router-link>
       </div>
       
+    </div>
+    <div class="rankDiv">
+      {{curText}}
+      <a href="javascript:;" @click="tabFn">{{tabText}} &gt;</a>
     </div>
    <!--  <div class="wb">
       <em>自动挖宝</em><span>挖宝中</span>
@@ -45,7 +48,7 @@
       <span>头条</span>
       <em>【小秘书专访】星球又有新岗位啦！小伙伴们赶快加入</em>
     </div> -->
-    <ul class="zxjl">
+    <!-- <ul class="zxjl">
       <div><span>最新记录</span></div>
       <li v-for="item in powerList">
         <span>{{item.source}}</span>
@@ -53,24 +56,42 @@
         <span>{{item.createDate}}</span>
       </li>
       <router-link :to="{name:'sourceList',query:{sid:token}}">查看更多记录</router-link>
-    </ul>
-    <ul class="wbsj">
-    <div>
-      <span>挖宝数据</span>
+    </ul> -->
+    <div class="phTit" v-show="cur==0">
+      <img src="../assets/icon/icon20.png">
     </div>
-      <li><span>我当前的挖宝算力</span><em>{{myPower}}</em></li>
-      <li><span>我的算力排名</span><em>{{myRankNo}}</em></li>
-      <!-- <li><span>今日全民挖宝获利次数</span><em>没有接口数据</em></li>
-      <li><span>累计全民挖宝获利次数</span><em>没有接口数据</em></li> -->
-    </ul>
-    <div class="phTit">
-      <img src="../assets/icon/icon04.png">
-    </div>
-    <div class="table">
+    <div  v-show="cur==0" class="table" style="margin-bottom:0.2rem;">
       <div class="thead">
         <div class="th">名次</div>
         <div class="th">账户</div>
-        <div class="th">算力值</div>
+        <div class="th">正币数量</div>
+      </div>
+      <div class="tbody">
+        <div class="tr" v-for="item in zcoinList">
+          <div class="td" v-if="item.rank==1"><img src="../assets/icon/icon05.png" alt=""></div>
+          <div class="td" v-else-if="item.rank==2"><img src="../assets/icon/icon06.png" alt=""></div>
+          <div class="td" v-else-if="item.rank==3"><img src="../assets/icon/icon07.png" alt=""></div>
+          <div class="td" v-else>{{item.rank}}</div>
+          <div class="td">{{item.name}}</div>
+          <div class="td">{{item.zcoin}}</div>
+        </div>  
+      </div>     
+    </div>
+   <!--  <ul class="wbsj" style="margin-top:0.2rem;">
+    <div>
+      <span>挖宝数据</span>
+    </div>
+      <li><span>我当前的挖宝源力</span><em>{{myPower}}</em></li>
+      <li><span>我的源力排名</span><em>{{myRankNo}}</em></li>
+    </ul> -->
+    <div class="phTit"  v-show="cur==1">
+      <img src="../assets/icon/icon04.png">
+    </div>
+    <div class="table"  v-show="cur==1">
+      <div class="thead">
+        <div class="th">名次</div>
+        <div class="th">账户</div>
+        <div class="th">源力值</div>
       </div>
       <div class="tbody">
         <div class="tr" v-for="item in list">
@@ -99,13 +120,19 @@ export default {
       value:true,
       kuang:[],
       token:"",
-      powerList:[],
+      // powerList:[],
       list:[],
       myRankNo:"",
       myPower:"",
       myZcoin:"",
+      myZcoinNo:"",
       inviteCode:"",
-      audioSrc:api.audio
+      audioSrc:api.audio,
+      notification:{},
+      zcoinList:[],
+      curText:"正币排行榜",
+      tabText:"按源力排行",
+      cur:0
 
     }
   },
@@ -116,21 +143,38 @@ export default {
   mounted(){        
     this.getDetail();
     this.getRank();
-    this.getPower();     
+    this.getZcoinRank();     
   },
   methods:{
+    tabFn(){
+      if(this.cur==0){
+        this.cur=1;
+        this.curText="源力排行榜"
+        this.tabText="按正币排行"
+
+      }else{
+        this.cur=0;
+        this.curText="正币排行榜"
+        this.tabText="按源力排行"
+
+      }
+
+    },
     wa(id,i,coin){
       var self=this;
+      
       let audio = new Audio();
       audio.src = self.audioSrc;
       this.axios.get(api.wakuang, {params:{mineralId:id}})
           .then(function (res) {
             Indicator.close();
             if(res.data.code==200){
-              self.myZcoin=parseFloat(self.myZcoin+coin).toFixed(5)
-              self.getRank()              
               audio.play();
               self.animateFn(i)
+              // self.myZcoin=(parseFloat(self.myZcoin)+parseFloat(coin)).toFixed(5)    
+              self.getRank();
+              self.getZcoinRank();            
+              
             }else if(res.data.code==201){
               window.webkit.messageHandlers.getParames.postMessage("login")
             }else{
@@ -161,6 +205,7 @@ export default {
               self.kuang=res.data.result.minerals;
               self.myZcoin=res.data.result.zcoin;
               self.inviteCode=res.data.result.inviteCode;
+              self.notification=res.data.result.notification
             }else if(res.data.code==201){
               window.webkit.messageHandlers.getParames.postMessage("login")
             }else{
@@ -195,13 +240,15 @@ export default {
         });
 
     },
-    getPower(){
+    getZcoinRank(){
        var self=this;
         Indicator.open();               
-        this.axios.get(api.powerOrder, {params: {pageSize:3,pageNo:1}}).then(function (res) {
+        this.axios.get(api.zcoinRank).then(function (res) {
           Indicator.close();
           if(res.data.code==200){
-            self.powerList=res.data.result.powerList;
+            self.myZcoin=res.data.result.zcoin;
+            self.myZcoinNo=res.data.result.rankNo;
+            self.zcoinList=res.data.result.zcoinRankList;
 
           }else if(res.data.code==201){
               window.webkit.messageHandlers.getParames.postMessage("login")
@@ -222,10 +269,22 @@ export default {
 
 <style lang="scss">
 #home{
+  .rankDiv{
+    height:1.5rem;
+    line-height:1.5rem;
+    padding:0 0.5rem;
+    backkground:#fff;
+    font-size:0.4rem;
+    a{
+      float:right;
+      text-decoration: none;
+    }
+  }
   background: #efefef;
 .clearfix:after{clear: both;content: '';display: block;height: 0;}
 input[type="text"] {
 -webkit-appearance: none;
+
 }
 input[type="tel"] {
 -webkit-appearance: none;
@@ -239,6 +298,7 @@ textarea{
 .mainBox{
   width: 10.8rem;
   height: 12.96rem;
+  overflow: hidden;
   background: url("../assets/bg/main.jpg") no-repeat center;
   background-size: contain;
   position: relative;
@@ -263,10 +323,11 @@ textarea{
     padding: 0 0.4rem;
     border-radius: 0.45rem;
     top: 1.7rem;
+    z-index:100000;
   }
   .sr{
     position: absolute;
-    right: 0.5rem;
+    left: 0.5rem;
     height: 0.9rem;
     line-height: 0.9rem;
     color: #fff;
@@ -274,7 +335,8 @@ textarea{
     background: rgba(33,99,178,0.7);
     padding: 0 0.4rem;
     border-radius: 0.45rem;
-    top: 1.7rem;
+    top: 0.5rem;
+    z-index:100000;
   }
   .sm{
     padding: 0 0.5rem;

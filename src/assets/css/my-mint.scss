@@ -8,6 +8,9 @@
 	width:0.56rem;
 	height:0.56rem;
 }
+.mint-field .mint-cell-title{
+  width:2.4rem;
+}
 
 .wkBox{
   position: absolute;
@@ -153,6 +156,15 @@
   top: 2.8rem;
   left: 8.5rem;
   animation-delay:0.4s;
+}
+.mint-cell-text{
+  font-size:0.38rem;
+  color:#333;
+
+}
+.mint-field-core{
+  font-size:0.38rem;
+  color:#666;
 }
 
 @-webkit-keyframes dou

@@ -3,11 +3,18 @@
       infinite-scroll-disabled="loadingM"
       infinite-scroll-distance="10"
       infinite-scroll-immediate-check="false">
-      <div class="topTitle"><router-link :to="{name:'home',query:{sid:token}}"></router-link>我的资产</div>
-      <div style="height:1.5rem"></div>
+      <div class="topTitle" v-if="isIndex==1"><router-link :to="{name:'home',query:{sid:token}}"></router-link>我的资产</div>
+      <div style="height:1.5rem" v-if="isIndex==1"></div>
+      <div class="listBox" >
+      <div class="listTitle"> 正币总量</div>
+      <div class="Zl">{{zcoin}}</div>
+      <!-- <div class="listNum" style="font-weight: bold"></div> -->
+      <router-link :to="{name:'putForward',query:{sid:token,zcoin:zcoin,isIndex:isIndex}}" class="dateBox" style="text-decoration: none">提现 &gt;</router-link>
+    </div>
 		<div class="listItem" v-for="item in msgList">
 			<div class="listTitle"><img src="../assets/icon/icon08.png"> {{item.source}}</div>
 			<div class="listNum">{{item.zcoin}}</div>
+      <div class="dateBox">{{item.createDate}}</div>
 		</div>
 	</div>
 </template>
@@ -23,12 +30,15 @@ export default {
       msgList:[],
       pageSize:15,
       pageNo:1,
-      totalPage:0
+      totalPage:0,
+      zcoin:0,
+      isIndex:0
     
     }
   },
   created(){
-    this.token=this.$route.query.sid 
+    this.token=this.$route.query.sid;
+    this.isIndex= this.$route.query.isIndex;
    document.cookie='zstar_sid='+this.token;  
   },
   mounted() {
@@ -60,6 +70,7 @@ export default {
     }).then(function (res) {
       Indicator.close();
       if(res.data.code==200){
+        self.zcoin=res.data.result.zcoin
         self.totalPage= Math.ceil(res.data.result.count/self.pageSize)
         for(var i=0;i<res.data.result.zcoinList.length;i++){
           self.msgList.push(res.data.result.zcoinList[i]) ;
@@ -89,6 +100,29 @@ export default {
 #myAssets{
   background: #efefef;
 }
+.listBox{
+  background: linear-gradient(#6a60f7,#0ba4fd);
+  height:2rem;
+  position:relative;
+  padding:0.5rem;
+  color:#fff;
+  .listTitle{
+    font-size:0.28rem;
+
+  }
+  .Zl{
+    font-size:0.8rem;
+    margin-top:0.5rem;
+
+  }
+  .dateBox{
+    position:absolute;
+    right:0.5rem;
+    bottom:0.8rem;
+    color:#fff;
+    font-size:0.4rem;
+  }
+}
 .listItem{
   display: -webkit-flex; /* Safari */
     display: flex;
@@ -114,6 +148,9 @@ export default {
     .listNum{
       font-size: 0.4rem;
       color: #fd5555;
+    }
+    .dateBox{
+      font-size: 0.4rem;
     }
 
 }

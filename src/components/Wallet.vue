@@ -2,13 +2,34 @@
 	<div id="wallet">
     <div id="createWallet" v-show="!isCreate">
       <img src="../assets/icon/icon09.png">
-      <p>暂未绑定ZIN钱包</p>
+      <p>暂未绑定正币钱包</p>
       <a href="javascript:;" @click="createWa">创建钱包</a>      
     </div>
     <div id="myWallet" v-show="isCreate">
-      <div class="listItem">
-      <div class="listTitle"><img src="../assets/icon/icon08.png">ZIN</div>
-      <div class="listNum">{{zcoin}}</div>
+      <!-- <div class="listItem">
+      <div class="listTitle"><img src="../assets/icon/icon08.png">正币</div>
+      <div class="listNum">{{zcoin}}</div> -->
+      <div class="myHead">
+       <!--  <div class="headBox"><img :src="img" v-if="img"><img v-else src="../assets/icon/icon08.png"></div>
+        <div class="nickName">{{nickName}}</div> -->
+        <div class="zcBox">
+          <div class="box1" >
+            
+            <em>{{zcoinBalance}}</em>
+            <p>ZIN</p>
+          </div>
+          <!-- <div class="box2" style="text-align:center;font-size:0.42rem">≈</div>
+          <div class="box3" style="text-align:right">
+            <p>价值 (RMB)</p>
+            <em>{{(0.1*zcoin).toFixed(2)}}</em>
+          </div> -->
+        </div>
+        
+      </div>
+      <div class="btnBox">
+        <a href="javascript:;" @click="sendFn">发送</a>
+        <a href="javascript:;" @click="sendFn">接收</a>
+      </div>
     </div>
     </div>
 
@@ -25,7 +46,10 @@ export default {
     return {
       token:"",
       isCreate:false,
-      zcoin:0   
+      zcoin:0,
+      nickName:'',
+      img:'',
+      zcoinBalance:0
     }
   },
   created(){
@@ -34,7 +58,9 @@ export default {
   },
   mounted() {
     document.title="我的钱包";
-    this.getDetail()
+    this.getMyCoin();
+    this.getDetail();
+    
   },
   methods: {
     createWa(){
@@ -63,6 +89,10 @@ export default {
 
         },()=>{});
     },
+    sendFn(){
+      MessageBox('提示', '暂未开通');
+
+    },
     getDetail(){
         var self=this;
         Indicator.open();               
@@ -84,6 +114,30 @@ export default {
         　　Toast(error);
         });
 
+      },
+      getMyCoin(){
+        var self=this;
+        Indicator.open();               
+        this.axios.get(api.getMyCoin).then(function (res) {
+          Indicator.close();
+          if(res.data.code==200){
+            if(res.data.result.img){
+              self.img=res.data.result.img;
+            }
+            self.nickName=res.data.result.nickname;
+            self.zcoinBalance=res.data.result.zcoinBalance;
+              
+            }else if(res.data.code==201){
+              window.webkit.messageHandlers.getParames.postMessage("login")
+            }else{
+            Toast(res.data.message)
+          }
+          
+
+        }).catch(function (error) {
+        　　Toast(error);
+        });
+
       }
    
   }
@@ -91,6 +145,27 @@ export default {
 </script>
 <style lang="scss">
 #wallet{
+  .btnBox{
+    height:1.5rem;
+    background:#fff;
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    box-sizing:border-box;
+    padding:0.22rem 0;
+    a{
+      display:block;
+      width:50%;
+      text-align:center;
+      height:1.06rem;
+      line-height:1.06rem;
+      color:#4880ed;
+      font-size:0.5rem;
+      text-decoration:none;
+    }
+    a:first-of-type{
+      border-right:0.01rem solid #e8e9eb;
+    }
+  }
   .listItem{
   display: -webkit-flex; /* Safari */
     display: flex;
@@ -144,6 +219,58 @@ export default {
       background: #4982e6;
       border-radius: 0.05rem;
       text-decoration: none;
+    }
+  }
+
+
+
+  .myHead{
+    height:7.88rem;
+    box-sizing: border-box;
+    background: linear-gradient(#6a60f7,#0ba4fd);
+    color: #fff;
+    position:relative;
+    .headBox{
+      position:absolute;
+      width:2rem;
+      height:2rem;
+      over-flow:hidden;
+      border-radius:50%;
+      left:50%;
+      margin-left:-1rem;
+      top:1.75rem;
+      img{
+        width:2rem;
+        height:2rem;
+      }
+    }
+    .nickName{
+      font-size:0.45rem;
+      text-align:center;
+      width:100%;
+      position:absolute;
+      top:3.85rem;
+
+    }
+    .zcBox{
+      position:absolute;
+      top:2.5rem;
+      width:100%;
+      left:0rem;
+      text-align:center;
+      >div{
+        width:100%;
+        text-align:center;
+        p{
+          font-size:0.38rem;
+          line-height:0.9rem;
+          margin-top:0.2rem;
+        }
+        em{
+          font-size:1.5rem;
+
+        }
+      }
     }
   }
 

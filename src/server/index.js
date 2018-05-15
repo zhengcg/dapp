@@ -9,7 +9,7 @@ import * as types from '../store/types'
 import router from '../router'
 
 // axios 配置
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 20000;
 
 // http request 拦截器
 // axios.interceptors.request.use(

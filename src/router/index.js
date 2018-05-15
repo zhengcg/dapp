@@ -8,6 +8,7 @@ import MyAssets from '@/components/MyAssets'
 import Wallet from '@/components/Wallet'
 import Source from '@/components/Source'
 import Invitation from '@/components/Invitation'
+import putForward from '@/components/putForward'
 Vue.use(Router)
 
 const router=new Router({
@@ -41,6 +42,11 @@ const router=new Router({
       path:'/invitation',
       name:'invitation',
       component:Invitation
+    },
+    {
+      path:'/putForward',
+      name:'putForward',
+      component:putForward
     },
     {
         path:'/',

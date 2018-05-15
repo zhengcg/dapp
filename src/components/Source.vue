@@ -1,8 +1,9 @@
 <template>
 <div id="source">
-  <div class="topTitle"><router-link :to="{name:'home',query:{sid:token}}"></router-link>提升算力</div>
+  <div class="topTitle"><router-link :to="{name:'home',query:{sid:token}}"></router-link>提升源力</div>
   <div style="height:1.4rem"></div>
   <div class="sourceTitle">
+    <h1>当前源力：<em>{{power}}</em></h1>
     <h3>提升源力任务栏</h3>
     <div>授权一下平台的账户信息，可快速提升源力，并同时获得ZIN奖励</div>
   </div>
@@ -54,12 +55,14 @@ import { Toast } from 'mint-ui';
 export default {
   data() {
     return {
-      token:""
+      token:"",
+      power:0
     
     }
   },
   created(){
-    this.token=this.$route.query.sid 
+    this.token=this.$route.query.sid;
+    this.power=this.$route.query.power;
     document.cookie='zstar_sid='+this.token;  
   },
   mounted() {
@@ -76,9 +79,12 @@ export default {
 </script>
 <style lang="scss">
 #source{
+  background: #efefef;
   .sourceList{
     width: 10.1rem;
-    margin: 0.15rem auto;
+    margin: 0.15rem auto 0 auto;
+    padding-bottom:0.3rem;
+    background: #efefef;
     >div{
       float: left;
       width: 50%;
@@ -143,7 +149,7 @@ export default {
   .sourceTitle{
     width: 9.8rem;
     margin: 0.3rem auto;
-    height: 2.9rem;
+    height: 3.9rem;
     background: linear-gradient(#695ff6,#0aa4ff);
     border-radius: 0.08rem;
     color: #fff;
