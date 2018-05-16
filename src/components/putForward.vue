@@ -24,7 +24,8 @@ export default {
       walletAddress:"",
       num:0,
       zcoin:0,
-      isIndex:0
+      isIndex:0,
+      isIOS:'ios'
     }
   },
   created(){
@@ -35,7 +36,8 @@ export default {
   },
   mounted() {
     document.title="提现";
-    this.getAddress()
+    this.getAddress();
+    this.checkApp();   
   },
   methods: {
       getAddress(){     
@@ -47,7 +49,12 @@ export default {
           self.walletAddress=res.data.result.walletAddress   
 
         }else if(res.data.code==201){
-           window.webkit.messageHandlers.getParames.postMessage("login")
+           if(self.isIOS=='ios'){
+                window.webkit.messageHandlers.getParames.postMessage("login")
+
+              }else if(self.isIOS=='android'){
+                AndroidAndIosObj.getParames("login");
+              }
         }
           
             
@@ -55,6 +62,14 @@ export default {
       　　Toast(error);
       });
        
+      },
+      checkApp(){
+      if(navigator.userAgent.split('platformParams=')[1]){
+          var platformParams =  JSON.parse(navigator.userAgent.split('platformParams=')[1]);
+          this.isIOS=platformParams.platform
+        }else{
+          return;
+        }
       },
       tx(){
         var self=this;
@@ -71,9 +86,15 @@ export default {
           .then(function (res) {
             Indicator.close();
             if(res.data.code==200){
+              self.zcoin=(parseFloat(self.zcoin)-parseFloat(self.num)).toFixed(5)
                MessageBox('提示', '提取成功');
             }else if(res.data.code==201){
-              window.webkit.messageHandlers.getParames.postMessage("login")
+              if(self.isIOS=='ios'){
+                window.webkit.messageHandlers.getParames.postMessage("login")
+
+              }else if(self.isIOS=='android'){
+                AndroidAndIosObj.getParames("login");
+              }
             }else{
               Toast(res.data.message);
             }

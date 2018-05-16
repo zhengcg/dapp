@@ -28,7 +28,8 @@ export default {
     	msgList:[],
     	pageSize:10,
     	pageNo:1,
-    	totalPage:0
+    	totalPage:0,
+    	isIOS:'ios'
     
     }
   },
@@ -38,7 +39,8 @@ export default {
   },
   mounted() {
     document.title="源力记录";
-    this.getMsg(1)
+    this.getMsg(1);
+    this.checkApp();   
   },
   methods: {
   		loadMoreM(){
@@ -56,6 +58,14 @@ export default {
 						  	       		
 		    }
   	},
+  	checkApp(){
+      if(navigator.userAgent.split('platformParams=')[1]){
+          var platformParams =  JSON.parse(navigator.userAgent.split('platformParams=')[1]);
+          this.isIOS=platformParams.platform
+        }else{
+          return;
+        }
+      },
   	getMsg(pageNo){  		
   		var self=this;
   		 Indicator.open(); 		 			
@@ -71,7 +81,12 @@ export default {
 		        self.loadingM=false;    
 
 		      }else if(res.data.code==201){
-		         window.webkit.messageHandlers.getParames.postMessage("login")
+		         if(self.isIOS=='ios'){
+		                window.webkit.messageHandlers.getParames.postMessage("login")
+
+		              }else if(self.isIOS=='android'){
+		                AndroidAndIosObj.getParames("login");
+		              }
 		      }			
 					
 		}).catch(function (error) {

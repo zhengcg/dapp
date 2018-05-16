@@ -9,7 +9,7 @@
       <div class="listTitle"> 正币总量</div>
       <div class="Zl">{{zcoin}}</div>
       <!-- <div class="listNum" style="font-weight: bold"></div> -->
-      <router-link :to="{name:'putForward',query:{sid:token,zcoin:zcoin,isIndex:isIndex}}" class="dateBox" style="text-decoration: none">提现 &gt;</router-link>
+      <router-link :to="{name:'putForward',query:{sid:token,zcoin:zcoin,isIndex:isIndex}}" class="dateBox" style="text-decoration: none">提现</router-link>
     </div>
 		<div class="listItem" v-for="item in msgList">
 			<div class="listTitle"><img src="../assets/icon/icon08.png"> {{item.source}}</div>
@@ -32,7 +32,8 @@ export default {
       pageNo:1,
       totalPage:0,
       zcoin:0,
-      isIndex:0
+      isIndex:0,
+      isIOS:'ios'
     
     }
   },
@@ -43,7 +44,8 @@ export default {
   },
   mounted() {
     document.title="我的资产";
-    this.getMsg(1)
+    this.getMsg(1);
+    this.checkApp();   
   },
   methods: {
     
@@ -78,7 +80,12 @@ export default {
         self.loadingM=false;    
 
       }else if(res.data.code==201){
-         window.webkit.messageHandlers.getParames.postMessage("login")
+         if(self.isIOS=='ios'){
+                window.webkit.messageHandlers.getParames.postMessage("login")
+
+              }else if(self.isIOS=='android'){
+                AndroidAndIosObj.getParames("login");
+              }
       }
         
           
@@ -89,7 +96,15 @@ export default {
                       
         
       
-    }
+    },
+    checkApp(){
+      if(navigator.userAgent.split('platformParams=')[1]){
+          var platformParams =  JSON.parse(navigator.userAgent.split('platformParams=')[1]);
+          this.isIOS=platformParams.platform
+        }else{
+          return;
+        }
+      }
 
 
    
@@ -121,6 +136,9 @@ export default {
     bottom:0.8rem;
     color:#fff;
     font-size:0.4rem;
+    padding-right: 0.45rem;
+    background: url("../assets/icon/icon22.png") no-repeat right center;
+    background-size: 0.4rem;
   }
 }
 .listItem{

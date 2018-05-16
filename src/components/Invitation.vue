@@ -51,7 +51,8 @@ export default {
       token:"",
       inviteCode:"",
       shareUrl:"",
-      share:0
+      share:0,
+      isIOS:'ios'
     
     }
   },
@@ -66,11 +67,27 @@ export default {
     
   },
   mounted() {
-    document.title="邀请好友";
+    document.title="邀请好友"; 
+    this.checkApp()  
   },
   methods: { 
     copyFn(s){
-      window.webkit.messageHandlers.getParames.postMessage("paste:"+s);
+      var self=this;
+      if(self.isIOS=='ios'){
+           window.webkit.messageHandlers.getParames.postMessage("paste:"+s);
+
+       }else if(self.isIOS=='android'){
+            AndroidAndIosObj.getParames("paste:"+s);
+       }
+      
+    },
+    checkApp(){
+      if(navigator.userAgent.split('platformParams=')[1]){
+          var platformParams =  JSON.parse(navigator.userAgent.split('platformParams=')[1]);
+          this.isIOS=platformParams.platform
+        }else{
+          return;
+        }
     }
   }
 }

@@ -33,7 +33,7 @@
     </div>
     <div class="rankDiv">
       {{curText}}
-      <a href="javascript:;" @click="tabFn">{{tabText}} &gt;</a>
+      <a href="javascript:;" @click="tabFn">{{tabText}}</a>
     </div>
    <!--  <div class="wb">
       <em>自动挖宝</em><span>挖宝中</span>
@@ -132,7 +132,8 @@ export default {
       zcoinList:[],
       curText:"正币排行榜",
       tabText:"按源力排行",
-      cur:0
+      cur:0,
+      isIOS:'ios'
 
     }
   },
@@ -143,7 +144,8 @@ export default {
   mounted(){        
     this.getDetail();
     this.getRank();
-    this.getZcoinRank();     
+    this.getZcoinRank();
+    this.checkApp();   
   },
   methods:{
     tabFn(){
@@ -176,7 +178,13 @@ export default {
               self.getZcoinRank();            
               
             }else if(res.data.code==201){
-              window.webkit.messageHandlers.getParames.postMessage("login")
+              if(self.isIOS=='ios'){
+                window.webkit.messageHandlers.getParames.postMessage("login")
+
+              }else if(self.isIOS=='android'){
+                AndroidAndIosObj.getParames("login");
+              }
+              
             }else{
               Toast(res.data.message);
             }
@@ -190,7 +198,7 @@ export default {
     },
     animateFn(i){
       
-      $(".wkBox a").eq(i).animate({left: "0.5rem", top: "10rem",opacity:0.3}, 500,function(){
+      $(".wkBox a").eq(i).animate({ top: "0",opacity:0.3}, 500,function(){
         $(this).hide()
       });
       
@@ -207,7 +215,12 @@ export default {
               self.inviteCode=res.data.result.inviteCode;
               self.notification=res.data.result.notification
             }else if(res.data.code==201){
-              window.webkit.messageHandlers.getParames.postMessage("login")
+              if(self.isIOS=='ios'){
+                window.webkit.messageHandlers.getParames.postMessage("login")
+
+              }else if(self.isIOS=='android'){
+                AndroidAndIosObj.getParames("login");
+              }
             }else{
             Toast(res.data.message)
           }
@@ -229,7 +242,12 @@ export default {
             self.list=res.data.result.powerRankList;
 
           }else if(res.data.code==201){
-              window.webkit.messageHandlers.getParames.postMessage("login")
+              if(self.isIOS=='ios'){
+                window.webkit.messageHandlers.getParames.postMessage("login")
+
+              }else if(self.isIOS=='android'){
+                AndroidAndIosObj.getParames("login");
+              }
           }else{
             Toast(res.data.message)
           }
@@ -251,7 +269,12 @@ export default {
             self.zcoinList=res.data.result.zcoinRankList;
 
           }else if(res.data.code==201){
-              window.webkit.messageHandlers.getParames.postMessage("login")
+              if(self.isIOS=='ios'){
+                window.webkit.messageHandlers.getParames.postMessage("login")
+
+              }else if(self.isIOS=='android'){
+                AndroidAndIosObj.getParames("login");
+              }
           }else{
             Toast(res.data.message)
           }
@@ -261,7 +284,16 @@ export default {
         　　Toast(error);
         });
 
-    }
+    },
+    checkApp(){
+      if(navigator.userAgent.split('platformParams=')[1]){
+          var platformParams =  JSON.parse(navigator.userAgent.split('platformParams=')[1]);
+          this.isIOS=platformParams.platform
+        }else{
+          return;
+        }
+      }
+        
 
   }
 }
@@ -278,6 +310,10 @@ export default {
     a{
       float:right;
       text-decoration: none;
+      color: #13227a;
+      padding-right: 0.55rem;
+      background: url("../assets/icon/icon21.png") no-repeat right center;
+      background-size: 0.5rem;
     }
   }
   background: #efefef;

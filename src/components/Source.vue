@@ -67,6 +67,7 @@ export default {
   },
   mounted() {
     document.title="提升算力";
+
   },
   methods: {
     

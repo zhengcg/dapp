@@ -46,7 +46,8 @@ export default {
     return {
       token:"",
       isCreate:false,
-      zcoin:0
+      zcoin:0,
+      isIOS:'ios'
     }
   },
   created(){
@@ -56,9 +57,17 @@ export default {
   mounted() {
     document.title="我的钱包";
     this.getDetail();
-    
+    this.checkApp(); 
   },
   methods: {
+    checkApp(){
+      if(navigator.userAgent.split('platformParams=')[1]){
+          var platformParams =  JSON.parse(navigator.userAgent.split('platformParams=')[1]);
+          this.isIOS=platformParams.platform
+        }else{
+          return;
+        }
+      },
     createWa(){
       var self=this;
       MessageBox.prompt('请输入钱包私钥').then(({ value, action }) => {
@@ -71,7 +80,12 @@ export default {
                     self.isCreate=true;
                     self.getDetail();
                   }else if(res.data.code==201){
-                    window.webkit.messageHandlers.getParames.postMessage("login")
+                    if(self.isIOS=='ios'){
+                      window.webkit.messageHandlers.getParames.postMessage("login")
+
+                    }else if(self.isIOS=='android'){
+                      AndroidAndIosObj.getParames("login");
+                    }
                   }else{
                   Toast(res.data.message)
                 }
@@ -98,7 +112,12 @@ export default {
               self.isCreate=true
               self.zcoin=res.data.result.balance
             }else if(res.data.code==201){
-              window.webkit.messageHandlers.getParames.postMessage("login")
+              if(self.isIOS=='ios'){
+                    window.webkit.messageHandlers.getParames.postMessage("login")
+
+                  }else if(self.isIOS=='android'){
+                    AndroidAndIosObj.getParames("login");
+                  }
             }else if(res.data.code==501){
               self.isCreate=false
             }else{
