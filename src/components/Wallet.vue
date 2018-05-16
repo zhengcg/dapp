@@ -77,7 +77,6 @@ export default {
                 Indicator.close();
                 if(res.data.code==200){
                     Toast("创建成功！");
-                    self.isCreate=true;
                     self.getDetail();
                   }else if(res.data.code==201){
                     if(self.isIOS=='ios'){
